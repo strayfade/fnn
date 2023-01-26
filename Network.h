@@ -1,25 +1,41 @@
+#pragma once
 
 #include <iostream>
 #include <vector>
 #include <math.h>
+#include <string>
 
-#define List std::vector
-#define Random ((float)(rand() / (float)RAND_MAX) - 0.5f)
+using namespace std;
+#define V vector
+#define Random(LO, HI) (LO + (float)(rand()) / ((float)(RAND_MAX/(HI - LO))))
 
 class NeuralNetwork {
+private:
+    V<int> Layers;
+    V<V<float>> Neurons;
+    V<V<float>> Biases;
+    V<V<V<float>>> Weights;
+    V<int> Activations;
 public:
-    List<int> Layers;
-    List<List<float>> Neurons;
-    List<List<float>> Biases;
-    List<List<List<float>>> Weights;
-    List<int> Activations;
+    enum class ComparisonResults {
+        Worse,
+        Better,
+        Equal
+    };
+
+    float Fitness = 0.0f;
 
     void CreateNeurons();
     void CreateBiases();
     void CreateWeights();
 
-    float Performance = 0.0f;
-    NeuralNetwork(List<int> Layers);
+    V<float> Forward(V<float> Input);
+    void Mutate(int Chance, float Value);
+    void CloneFrom(NeuralNetwork Other);
 
-    List<float> Forward(List<float> Input);
-}
+    ComparisonResults CompareTo(NeuralNetwork Other);
+    bool Save(string Path);
+    bool Load(string Path);
+
+    NeuralNetwork(V<int> NewLayers);
+};
