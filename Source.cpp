@@ -1,10 +1,11 @@
 
+#ifdef _WIN32
 #include <Windows.h>
-#include "Network.h"
 
 #define Pen 0x00FFFFFF
 HBRUSH Brush = CreateSolidBrush(Pen);
 HDC hdc = GetDC(GetDesktopWindow());
+
 void DrawPoint(float X1, float Y1)
 {
 	RECT rect = { X1 - 1, Y1 - 1, X1 + 1, Y1 + 1 };
@@ -14,9 +15,12 @@ void DrawPoint(float X1, float Y1)
 struct Vec2 {
 	float x, y, Performance;
 };
+#endif
+
+#include "Network.h"
 
 int main() {
-
+	#ifdef _WIN32
 	V<int> Layers = { 2, 12, 2 };
 
 	V<NeuralNetwork> Networks;
@@ -76,4 +80,9 @@ int main() {
 		//cout << "Running!" << endl;
 		Sleep(5);
 	}
+	#else
+	_L("Tests are only supported on Windows at the moment, but Network.h still works on any operating system.", true);
+	_L("To get around this, write your own tests and remove these checks!", true);
+	_L("Logging can also be disabled entirely by commenting out the line where _NETWORK_LOG is defined.", true);
+	#endif
 }

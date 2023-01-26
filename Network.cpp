@@ -10,9 +10,9 @@
 #include <ostream>
 
 void NeuralNetwork::CreateNeurons() {
-    V<V<float>> NewNeurons;
+    V2(float) NewNeurons;
     for (int x = 0; x < this->Layers.size(); x++) {
-        V<float> NewNeuronsArray;
+        V(float) NewNeuronsArray;
         for (int y = 0; y < this->Layers[x]; y++) {
             NewNeuronsArray.push_back(0);
         }
@@ -21,9 +21,9 @@ void NeuralNetwork::CreateNeurons() {
     this->Neurons = NewNeurons;
 }
 void NeuralNetwork::CreateBiases() {
-    V<V<float>> NewBiases;
+    V2(float) NewBiases;
     for (int x = 0; x < this->Layers.size(); x++) {
-        V<float> NewBiasesArray;
+        V(float) NewBiasesArray;
         for (int y = 0; y < this->Layers[x]; y++) {
             NewBiasesArray.push_back(Random(-0.5f, 0.5f));
         }
@@ -32,12 +32,12 @@ void NeuralNetwork::CreateBiases() {
     this->Biases = NewBiases;
 }
 void NeuralNetwork::CreateWeights() {
-    V<V<V<float>>> NewWeights;
+    V3(float) NewWeights;
     for (int x = 1; x < this->Layers.size(); x++) {
-        V<V<float>> NewWeightsArray;
+        V2(float) NewWeightsArray;
         int NeuronsInPreviousLayer = this->Layers[x - 1];
         for (int y = 0; y < this->Neurons[x].size(); y++) {
-            V<float> NewWeightsArrayArray;
+            V(float) NewWeightsArrayArray;
             for (int z = 0; z < NeuronsInPreviousLayer; z++) {
                 NewWeightsArrayArray.push_back(Random(-0.5f, 0.5f));
             }
@@ -48,7 +48,7 @@ void NeuralNetwork::CreateWeights() {
     this->Weights = NewWeights;
 }
 
-V<float> NeuralNetwork::Forward(V<float> Input) {
+V(float) NeuralNetwork::Forward(V(float) Input) {
     for (int x = 0; x < Input.size(); x++) {
         this->Neurons[0][x] = Input[x];
     }
@@ -97,33 +97,33 @@ NeuralNetwork::ComparisonResults NeuralNetwork::CompareTo(NeuralNetwork Other) {
     return NeuralNetwork::ComparisonResults::Equal;
 }
 
-bool NeuralNetwork::Save(string Path) {
-    ofstream File(Path);
+bool NeuralNetwork::Save(std::string Path) {
+    std::ofstream File(Path);
     if (!File.is_open())
         return false;
     for (int x = 0; x < this->Biases.size(); x++) {
         for (int y = 0; y < this->Biases[x].size(); y++) {
-            File << to_string(this->Biases[x][y]) << "\n";
+            File << std::to_string(this->Biases[x][y]) << "\n";
         }
     }
     for (int x = 0; x < this->Weights.size(); x++) {
         for (int y = 0; y < this->Weights[x].size(); y++) {
             for (int z = 0; z < this->Weights[x][y].size(); z++) {
-                File << to_string(this->Weights[x][y][z]) << "\n";
+                File << std::to_string(this->Weights[x][y][z]) << "\n";
             }
         }
     }
     File.close();
     return true;
 }
-bool NeuralNetwork::Load(string Path) {
-    ifstream File(Path);
+bool NeuralNetwork::Load(std::string Path) {
+    std::ifstream File(Path);
     if (!File.is_open())
         return false;
 
     // Read all lines from file
-    V<string> Lines;
-    string CurrentLine;
+    V(std::string) Lines;
+    std::string CurrentLine;
     while (getline(File, CurrentLine)) {
         Lines.push_back(CurrentLine);
     }
@@ -132,14 +132,14 @@ bool NeuralNetwork::Load(string Path) {
     int Index = 1;
     for (int x = 0; x < this->Biases.size(); x++) {
         for (int y = 0; y < this->Biases[x].size(); y++) {
-            Biases[x][y] = stof(Lines[Index]);
+            Biases[x][y] = std::stof(Lines[Index]);
             Index++;
         }
     }
     for (int x = 0; x < this->Weights.size(); x++) {
         for (int y = 0; y < this->Weights[x].size(); y++) {
             for (int z = 0; z < this->Weights[x][y].size(); z++) {
-                this->Weights[x][y][z] = stof(Lines[Index]);
+                this->Weights[x][y][z] = std::stof(Lines[Index]);
                 Index++;
             }
         }
@@ -147,12 +147,25 @@ bool NeuralNetwork::Load(string Path) {
     return true;
 }
 
-NeuralNetwork::NeuralNetwork(V<int> NewLayers) {
+NeuralNetwork::NeuralNetwork(V(int) NewLayers) {
+
+#ifdef _NETWORK_ID
+    this->Id = _nid::CurrentId;
+    _nid::CurrentId += 1;
+#endif
+
     this->Layers = NewLayers;
     for (int i = 0; i < this->Layers.size(); i++) {
         this->Layers[i] = NewLayers[i];
     }
+    
     CreateNeurons();
     CreateBiases();
     CreateWeights();
+
+    _L("Initialized network", false);
+    #ifdef _NETWORK_ID
+    _L(" with ID " + std::to_string(this->Id), false);
+    #endif
+    _L("!", true);
 }
