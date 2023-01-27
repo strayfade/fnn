@@ -1,4 +1,3 @@
-
 #include "Network.h"
 
 #include <iostream>
@@ -147,25 +146,29 @@ bool NeuralNetwork::Load(std::string Path) {
     return true;
 }
 
-NeuralNetwork::NeuralNetwork(V(int) NewLayers) {
+NeuralNetwork::NeuralNetwork(V(int) NewLayers, bool CreateID) {
 
 #ifdef _NETWORK_ID
-    this->Id = _nid::CurrentId;
-    _nid::CurrentId += 1;
+    if (CreateID) {
+        this->Id = _nid::CurrentId;
+        _nid::CurrentId += 1;
+    }
 #endif
 
     this->Layers = NewLayers;
     for (int i = 0; i < this->Layers.size(); i++) {
         this->Layers[i] = NewLayers[i];
     }
-    
+
     CreateNeurons();
     CreateBiases();
     CreateWeights();
 
-    _L("Initialized network", false);
-    #ifdef _NETWORK_ID
-    _L(" with ID " + std::to_string(this->Id), false);
-    #endif
-    _L("!", true);
+    if (CreateID) {
+        _L("Initialized network", false);
+#ifdef _NETWORK_ID
+        _L(" with ID " + std::to_string(this->Id), false);
+#endif
+        _L("!", true);
+    }
 }

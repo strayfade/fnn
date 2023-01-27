@@ -22,7 +22,7 @@
 
 #ifdef _NETWORK_ID
 namespace _nid {
-    int CurrentId = 1;
+    inline int CurrentId = 1;
 }
 #endif
 
@@ -49,9 +49,9 @@ public:
         Equal
     };
 
-    #ifdef _NETWORK_ID
+#ifdef _NETWORK_ID
     int Id;
-    #endif
+#endif
 
     float Fitness;
 
@@ -67,7 +67,7 @@ public:
     bool Save(std::string Path);
     bool Load(std::string Path);
 
-    NeuralNetwork(V(int) NewLayers);
+    NeuralNetwork(V(int) NewLayers, bool CreateID = true);
 };
 #define _NETWORK_H
 #endif

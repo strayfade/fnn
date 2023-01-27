@@ -21,23 +21,22 @@ struct Vec2 {
 
 int main() {
 	#ifdef _WIN32
-	V<int> Layers = { 2, 12, 2 };
+	V(int) Layers = { 2, 6, 6, 2 };
 
-	V<NeuralNetwork> Networks;
+	V(NeuralNetwork) Networks;
 	for (int i = 0; i < 50; i++) {
 		Networks.push_back(NeuralNetwork(Layers));
 	}
 
 	while (true) {
-		V<Vec2> PointsToDraw;
+		V(Vec2) PointsToDraw;
 		
 		// Forward on all networks
 		POINT Pt;
 		GetCursorPos(&Pt);
 		for (int i = 0; i < Networks.size(); i++) {
-			//cout << Networks[i].Fitness << endl;
-			V<float> Input = { ((float)(Pt.x) / 1920) - 0.5f, ((float)(Pt.y) / 1080) - 0.5f };
-			auto Output = Networks[i].Forward(Input);
+			V(float) Input = { ((float)(Pt.x) / 1920) - 0.5f, ((float)(Pt.y) / 1080) - 0.5f };
+			V(float) Output = Networks[i].Forward(Input);
 			float Performance = pow(1 - sqrt(pow((((float)(Pt.x) - 960) / 1920) - Output[0], 2) + pow((((float)(Pt.y) - 540) / 1080) - Output[1], 2)), 5);
 			Vec2 Point;
 			Point.x = (Output[0] + 0.5f) * 1920;
@@ -45,15 +44,15 @@ int main() {
 			Point.Performance = Performance;
 			Networks[i].Fitness = Performance;
 			PointsToDraw.push_back(Point);
-			string t;
+			std::string t;
 			for (int i = 0; i < Performance * 100; i++) {
 				t += "|";
 			}
-			cout << "Performance: " << t << endl;
+			std::cout << "Performance: " << t << std::endl;
 		}
 
 		// Find best performing network
-		NeuralNetwork HighestFitness(Layers);
+		NeuralNetwork HighestFitness(Layers, false);
 		for (int i = 0; i < Networks.size(); i++) {
 			if (Networks[i].Fitness > HighestFitness.Fitness) {
 				HighestFitness = Networks[i];
@@ -73,8 +72,8 @@ int main() {
 		for (int i = 0; i < Networks.size(); i++) {
 			Networks[i].CloneFrom(HighestFitness);
 			//cout << "Fitness: " << HighestFitness.Fitness << "\n";
-			float Distance = sqrt(pow(Pt.x - T.x, 2) + pow(Pt.y - T.y, 2)) / 1920;
-			Networks[i].Mutate(1 / 0.05, Distance * 0.5);
+			float Distance =(Pt.x - T.x + Pt.y - T.y) / 1920;
+			Networks[i].Mutate(1 / 0.05, Distance * 0.1);
 		}
 
 		//cout << "Running!" << endl;
