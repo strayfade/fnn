@@ -66,7 +66,7 @@ V(float) NeuralNetwork::Forward(V(float) Input) {
 void NeuralNetwork::Mutate(int Chance, float Value) {
     for (int x = 0; x < this->Biases.size(); x++) {
         for (int y = 0; y < this->Biases[x].size(); y++) {
-            if (Random(0.0f, Chance) <= 5) {
+            if (Random(0.0f, Chance) <= 0.5) {
                 this->Biases[x][y] += Random(-Value, Value);
             }
         }
@@ -74,7 +74,7 @@ void NeuralNetwork::Mutate(int Chance, float Value) {
     for (int x = 0; x < this->Weights.size(); x++) {
         for (int y = 0; y < this->Weights[x].size(); y++) {
             for (int z = 0; z < this->Weights[x][y].size(); z++) {
-                if (Random(0.0f, Chance) <= 5) {
+                if (Random(0.0f, Chance) <= 0.5) {
                     this->Weights[x][y][z] += Random(-Value, Value);
                 }
             }
@@ -138,8 +138,10 @@ bool NeuralNetwork::Load(std::string Path) {
     for (int x = 0; x < this->Weights.size(); x++) {
         for (int y = 0; y < this->Weights[x].size(); y++) {
             for (int z = 0; z < this->Weights[x][y].size(); z++) {
-                this->Weights[x][y][z] = std::stof(Lines[Index]);
                 Index++;
+                if (Lines.size() >= Index + 1) {
+                    this->Weights[x][y][z] = std::stof(Lines[Index]);
+                }
             }
         }
     }
