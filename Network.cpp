@@ -63,7 +63,7 @@ V(float) NeuralNetwork::Forward(V(float) Input) {
     }
     return this->Neurons[Neurons.size() - 1];
 }
-void NeuralNetwork::Mutate(int Chance, float Value) {
+void NeuralNetwork::Mutate(float Chance, float Value) {
     for (int x = 0; x < this->Biases.size(); x++) {
         for (int y = 0; y < this->Biases[x].size(); y++) {
             if (Random(0.0f, Chance) <= 0.5) {

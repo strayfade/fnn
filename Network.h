@@ -18,6 +18,7 @@
 #define V2(T) std::vector<std::vector<T> >
 #define V3(T) std::vector<std::vector<std::vector<T> > >
 #endif
+
 #define Random(LO, HI) (LO + (float)(rand()) / ((float)(RAND_MAX/(HI - LO))))
 
 #ifdef _NETWORK_ID
@@ -60,7 +61,7 @@ public:
     void CreateWeights();
 
     V(float) Forward(V(float) Input);
-    void Mutate(int Chance, float Value);
+    void Mutate(float Chance, float Value);
     void CloneFrom(NeuralNetwork Other);
 
     ComparisonResults CompareTo(NeuralNetwork Other);
