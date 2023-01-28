@@ -40,7 +40,7 @@ int main() {
 	V(int) Layers = { 2, 12, 2 };
 
 	V(NeuralNetwork) Networks;
-	for (int i = 0; i < 100; i++) {
+	for (int i = 0; i < 50; i++) {
 		Networks.push_back(NeuralNetwork(Layers));
 	}
 

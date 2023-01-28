@@ -34,3 +34,6 @@
 # VS
 .vs
 .vscode
+*.user
+/x64
+/x86
