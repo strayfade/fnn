@@ -37,3 +37,5 @@
 *.user
 /x64
 /x86
+*.nn
+*.DS_Store

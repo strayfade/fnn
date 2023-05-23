@@ -10,13 +10,13 @@
 #define _NETWORK_LOG
 
 #ifdef _WIN32
-#define V(T) std::vector<T>
-#define V2(T) std::vector<std::vector<T>>
-#define V3(T) std::vector<std::vector<std::vector<T>>>
+#define _V(T) std::vector<T>
+#define _V2(T) std::vector<std::vector<T>>
+#define _V3(T) std::vector<std::vector<std::vector<T>>>
 #else
-#define V(T) std::vector<T>
-#define V2(T) std::vector<std::vector<T> >
-#define V3(T) std::vector<std::vector<std::vector<T> > >
+#define _V(T) std::vector<T>
+#define _V2(T) std::vector<std::vector<T> >
+#define _V3(T) std::vector<std::vector<std::vector<T> > >
 #endif
 
 #define Random(LO, HI) (LO + (float)(rand()) / ((float)(RAND_MAX/(HI - LO))))
@@ -35,10 +35,10 @@ namespace _nid {
 
 class NeuralNetwork {
 private:
-    V(int) Layers;
-    V2(float) Neurons;
-    V2(float) Biases;
-    V3(float) Weights;
+    _V(int) Layers;
+    _V2(float) Neurons;
+    _V2(float) Biases;
+    _V3(float) Weights;
 public:
 #ifdef _WIN32
     enum class ComparisonResults {
@@ -60,7 +60,7 @@ public:
     void CreateBiases();
     void CreateWeights();
 
-    V(float) Forward(V(float) Input);
+    _V(float) Forward(_V(float) Input);
     void Mutate(float Chance, float Value);
     void CloneFrom(NeuralNetwork Other);
 
@@ -68,7 +68,7 @@ public:
     bool Save(std::string Path);
     bool Load(std::string Path);
 
-    NeuralNetwork(V(int) NewLayers, bool CreateID = true);
+    NeuralNetwork(_V(int) NewLayers, bool CreateID = true);
 };
 #define _NETWORK_H
 #endif

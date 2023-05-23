@@ -9,9 +9,9 @@
 #include <ostream>
 
 void NeuralNetwork::CreateNeurons() {
-    V2(float) NewNeurons;
+    _V2(float) NewNeurons;
     for (int x = 0; x < this->Layers.size(); x++) {
-        V(float) NewNeuronsArray;
+        _V(float) NewNeuronsArray;
         for (int y = 0; y < this->Layers[x]; y++) {
             NewNeuronsArray.push_back(0);
         }
@@ -20,9 +20,9 @@ void NeuralNetwork::CreateNeurons() {
     this->Neurons = NewNeurons;
 }
 void NeuralNetwork::CreateBiases() {
-    V2(float) NewBiases;
+    _V2(float) NewBiases;
     for (int x = 0; x < this->Layers.size(); x++) {
-        V(float) NewBiasesArray;
+        _V(float) NewBiasesArray;
         for (int y = 0; y < this->Layers[x]; y++) {
             NewBiasesArray.push_back(Random(-0.5f, 0.5f));
         }
@@ -31,12 +31,12 @@ void NeuralNetwork::CreateBiases() {
     this->Biases = NewBiases;
 }
 void NeuralNetwork::CreateWeights() {
-    V3(float) NewWeights;
+    _V3(float) NewWeights;
     for (int x = 1; x < this->Layers.size(); x++) {
-        V2(float) NewWeightsArray;
+        _V2(float) NewWeightsArray;
         int NeuronsInPreviousLayer = this->Layers[x - 1];
         for (int y = 0; y < this->Neurons[x].size(); y++) {
-            V(float) NewWeightsArrayArray;
+            _V(float) NewWeightsArrayArray;
             for (int z = 0; z < NeuronsInPreviousLayer; z++) {
                 NewWeightsArrayArray.push_back(Random(-0.5f, 0.5f));
             }
@@ -47,7 +47,7 @@ void NeuralNetwork::CreateWeights() {
     this->Weights = NewWeights;
 }
 
-V(float) NeuralNetwork::Forward(V(float) Input) {
+_V(float) NeuralNetwork::Forward(_V(float) Input) {
     for (int x = 0; x < Input.size(); x++) {
         this->Neurons[0][x] = Input[x];
     }
@@ -121,7 +121,7 @@ bool NeuralNetwork::Load(std::string Path) {
         return false;
 
     // Read all lines from file
-    V(std::string) Lines;
+    _V(std::string) Lines;
     std::string CurrentLine;
     while (getline(File, CurrentLine)) {
         Lines.push_back(CurrentLine);
@@ -148,7 +148,7 @@ bool NeuralNetwork::Load(std::string Path) {
     return true;
 }
 
-NeuralNetwork::NeuralNetwork(V(int) NewLayers, bool CreateID) {
+NeuralNetwork::NeuralNetwork(_V(int) NewLayers, bool CreateID) {
 
 #ifdef _NETWORK_ID
     if (CreateID) {
