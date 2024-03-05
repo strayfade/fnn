@@ -1,4 +1,4 @@
-### **FNN**
+# fnn
 A general purpose, feed-forward neural network library for C++
  - Example trained to mimic human mouse movements in an effort to evade automation detection by anti-cheat software.
 
