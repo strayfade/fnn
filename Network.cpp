@@ -1,176 +1,148 @@
 #include "Network.h"
 
-#include <iostream>
-
 #include <sstream>
-#include <fstream>
-#include <sstream>
-#include <istream>
-#include <ostream>
 
 void NeuralNetwork::CreateNeurons() {
-    _V2(float) NewNeurons;
-    for (int x = 0; x < this->Layers.size(); x++) {
+    data.Neurons.clear();
+    for (unsigned long x = 0; x < Layers.size(); x++) {
         _V(float) NewNeuronsArray;
-        for (int y = 0; y < this->Layers[x]; y++) {
+        for (int y = 0; y < Layers[x]; y++) {
             NewNeuronsArray.push_back(0);
         }
-        NewNeurons.push_back(NewNeuronsArray);
+        data.Neurons.push_back(NewNeuronsArray);
     }
-    this->Neurons = NewNeurons;
 }
+
 void NeuralNetwork::CreateBiases() {
-    _V2(float) NewBiases;
-    for (int x = 0; x < this->Layers.size(); x++) {
+    data.Biases.clear();
+    for (unsigned long x = 0; x < Layers.size(); x++) {
         _V(float) NewBiasesArray;
-        for (int y = 0; y < this->Layers[x]; y++) {
-            NewBiasesArray.push_back(Random(-0.5f, 0.5f));
+        for (int y = 0; y < Layers[x]; y++) {
+            NewBiasesArray.push_back(0);
         }
-        NewBiases.push_back(NewBiasesArray);
+        data.Biases.push_back(NewBiasesArray);
     }
-    this->Biases = NewBiases;
 }
+
 void NeuralNetwork::CreateWeights() {
-    _V3(float) NewWeights;
-    for (int x = 1; x < this->Layers.size(); x++) {
+    data.Weights.clear();
+    for (unsigned long x = 1; x < Layers.size(); x++) {
         _V2(float) NewWeightsArray;
-        int NeuronsInPreviousLayer = this->Layers[x - 1];
-        for (int y = 0; y < this->Neurons[x].size(); y++) {
+        int NeuronsInPreviousLayer = Layers[x - 1];
+        for (unsigned long y = 0; y < data.Neurons[x].size(); y++) {
             _V(float) NewWeightsArrayArray;
             for (int z = 0; z < NeuronsInPreviousLayer; z++) {
-                NewWeightsArrayArray.push_back(Random(-0.5f, 0.5f));
+                NewWeightsArrayArray.push_back(0);
             }
             NewWeightsArray.push_back(NewWeightsArrayArray);
         }
-        NewWeights.push_back(NewWeightsArray);
+        data.Weights.push_back(NewWeightsArray);
     }
-    this->Weights = NewWeights;
 }
 
 _V(float) NeuralNetwork::Forward(_V(float) Input) {
-    for (int x = 0; x < Input.size(); x++) {
-        this->Neurons[0][x] = Input[x];
+    for (unsigned long x = 0; x < Input.size(); x++) {
+        data.Neurons[0][x] = Input[x];
     }
-    for (int x = 1; x < this->Layers.size(); x++) {
+    for (unsigned long x = 1; x < Layers.size(); x++) {
         int WorkingLayer = x - 1;
-        for (int y = 0; y < this->Neurons[x].size(); y++) {
+        for (unsigned long y = 0; y < data.Neurons[x].size(); y++) {
             float Value = 0.0f;
-            for (int z = 0; z < this->Neurons[WorkingLayer].size(); z++) {
-                Value += this->Weights[WorkingLayer][y][z] * this->Neurons[WorkingLayer][z];
+            for (unsigned long z = 0; z < data.Neurons[WorkingLayer].size(); z++) {
+                Value += data.Weights[WorkingLayer][y][z] * data.Neurons[WorkingLayer][z];
             }
-            this->Neurons[x][y] = tanh(Value + this->Biases[x][y]);
+            data.Neurons[x][y] = tanh(Value + data.Biases[x][y]);
         }
     }
-    return this->Neurons[Neurons.size() - 1];
+    return data.Neurons[data.Neurons.size() - 1];
 }
-void NeuralNetwork::Mutate(float Chance, float Value) {
-    for (int x = 0; x < this->Biases.size(); x++) {
-        for (int y = 0; y < this->Biases[x].size(); y++) {
-            if (Random(0.0f, Chance) <= 0.5) {
-                this->Biases[x][y] += Random(-Value, Value);
+
+void NeuralNetwork::Mutate(float Chance = 0.5f, float Value = 0.5f) {
+    for (unsigned long x = 0; x < data.Biases.size(); x++) {
+        for (unsigned long y = 0; y < data.Biases[x].size(); y++) {
+            if (Random(0.0f, 1.0f) <= Chance) {
+                data.Biases[x][y] += Random(-Value, Value);
             }
         }
     }
-    for (int x = 0; x < this->Weights.size(); x++) {
-        for (int y = 0; y < this->Weights[x].size(); y++) {
-            for (int z = 0; z < this->Weights[x][y].size(); z++) {
+    for (unsigned long x = 0; x < data.Weights.size(); x++) {
+        for (unsigned long y = 0; y < data.Weights[x].size(); y++) {
+            for (unsigned long z = 0; z < data.Weights[x][y].size(); z++) {
                 if (Random(0.0f, Chance) <= 0.5) {
-                    this->Weights[x][y][z] += Random(-Value, Value);
+                    data.Weights[x][y][z] += Random(-Value, Value);
                 }
             }
         }
     }
 }
 
-void NeuralNetwork::CloneFrom(NeuralNetwork Other) {
-    this->Biases = Other.Biases;
-    this->Weights = Other.Weights;
-    this->Fitness = Other.Fitness;
+void NeuralNetwork::CloneFrom(NeuralNetwork* other) {
+    data = other->data;
+    Fitness = other->Fitness;
 }
 
-NeuralNetwork::ComparisonResults NeuralNetwork::CompareTo(NeuralNetwork Other) {
-    if (Other.Fitness < this->Fitness)
-        return NeuralNetwork::ComparisonResults::Worse;
-    else if (Other.Fitness > this->Fitness)
-        return NeuralNetwork::ComparisonResults::Better;
-    return NeuralNetwork::ComparisonResults::Equal;
+bool NeuralNetwork::Compare(NeuralNetwork* other) {
+    return other->Fitness < Fitness;
 }
 
-bool NeuralNetwork::Save(std::string Path) {
-    std::ofstream File(Path);
-    if (!File.is_open())
-        return false;
-    for (int x = 0; x < this->Biases.size(); x++) {
-        for (int y = 0; y < this->Biases[x].size(); y++) {
-            File << std::to_string(this->Biases[x][y]) << "\n";
+std::string NeuralNetwork::Serialize() {
+    std::stringstream stream;
+    
+    for (unsigned long x = 0; x < data.Biases.size(); x++) {
+        for (unsigned long y = 0; y < data.Biases[x].size(); y++) {
+            stream << std::to_string(data.Biases[x][y]) << "\n";
         }
     }
-    for (int x = 0; x < this->Weights.size(); x++) {
-        for (int y = 0; y < this->Weights[x].size(); y++) {
-            for (int z = 0; z < this->Weights[x][y].size(); z++) {
-                File << std::to_string(this->Weights[x][y][z]) << "\n";
+    for (unsigned long x = 0; x < data.Weights.size(); x++) {
+        for (unsigned long y = 0; y < data.Weights[x].size(); y++) {
+            for (unsigned long z = 0; z < data.Weights[x][y].size(); z++) {
+                stream << std::to_string(data.Weights[x][y][z]) << "\n";
             }
         }
     }
-    File.close();
-    return true;
+    
+    return stream.str();
 }
-bool NeuralNetwork::Load(std::string Path) {
-    std::ifstream File(Path);
-    if (!File.is_open())
-        return false;
 
-    // Read all lines from file
-    _V(std::string) Lines;
-    std::string CurrentLine;
-    while (getline(File, CurrentLine)) {
-        Lines.push_back(CurrentLine);
+void NeuralNetwork::Load(std::string Serialized) {
+
+    // Split into lines
+    std::stringstream stream(Serialized);
+    std::string currentLine;
+    _V(std::string) lines;
+    while (std::getline(stream, currentLine)) {
+        lines.push_back(currentLine);
     }
-    File.close();
 
-    int Index = 1;
-    for (int x = 0; x < this->Biases.size(); x++) {
-        for (int y = 0; y < this->Biases[x].size(); y++) {
-            Biases[x][y] = std::stof(Lines[Index]);
-            Index++;
+    // Parse lines
+    unsigned long index = 1;
+    for (unsigned long x = 0; x < data.Biases.size(); x++) {
+        for (unsigned long y = 0; y < data.Biases[x].size(); y++) {
+            data.Biases[x][y] = std::stof(lines[index]);
+            index++;
         }
     }
-    for (int x = 0; x < this->Weights.size(); x++) {
-        for (int y = 0; y < this->Weights[x].size(); y++) {
-            for (int z = 0; z < this->Weights[x][y].size(); z++) {
-                Index++;
-                if (Lines.size() >= Index + 1) {
-                    this->Weights[x][y][z] = std::stof(Lines[Index]);
+    for (unsigned long x = 0; x < data.Weights.size(); x++) {
+        for (unsigned long y = 0; y < data.Weights[x].size(); y++) {
+            for (unsigned long z = 0; z < data.Weights[x][y].size(); z++) {
+                index++;
+                if (lines.size() >= index + 1) {
+                    data.Weights[x][y][z] = std::stof(lines[index]);
                 }
             }
         }
     }
-    return true;
 }
 
-NeuralNetwork::NeuralNetwork(_V(int) NewLayers, bool CreateID) {
+NeuralNetwork::NeuralNetwork(_V(int) NewLayers) {
 
-#ifdef _NETWORK_ID
-    if (CreateID) {
-        this->Id = _nid::CurrentId;
-        _nid::CurrentId += 1;
-    }
-#endif
-
-    this->Layers = NewLayers;
-    for (int i = 0; i < this->Layers.size(); i++) {
-        this->Layers[i] = NewLayers[i];
+    Layers = NewLayers;
+    for (unsigned long i = 0; i < Layers.size(); i++) {
+        Layers[i] = NewLayers[i];
     }
 
+    // Initialize network
     CreateNeurons();
     CreateBiases();
     CreateWeights();
-
-    if (CreateID) {
-        _L("Initialized network", false);
-#ifdef _NETWORK_ID
-        _L(" with ID " + std::to_string(this->Id), false);
-#endif
-        _L("!", true);
-    }
 }
