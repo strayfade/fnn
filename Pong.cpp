@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <thread>
 #include <chrono>
+#include <cmath>
 
 #include "Pong.h"
 

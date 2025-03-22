@@ -1,6 +1,7 @@
 #include "Network.h"
 
 #include <sstream>
+#include <cmath>
 
 void NeuralNetwork::CreateNeurons() {
     data.Neurons.clear();
