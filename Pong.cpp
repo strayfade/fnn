@@ -11,11 +11,19 @@
 
 #define rng(LOW, HIGH) (LOW + (float)(rand()) / ((float)(RAND_MAX / (HIGH - LOW))))
 
-winsize getRendererSize() {
-    winsize windowSize;
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &windowSize);
-    return windowSize;
+
+#ifndef _WIN32
+pongGame::rendererSize_t pongGame::getRendererSize() {
+    if (cachedWindowSize.ws_col == 0) {
+        winsize windowSize;
+        ioctl(STDOUT_FILENO, TIOCGWINSZ, &windowSize);
+        cachedWindowSize.ws_col = windowSize.ws_col;
+        cachedWindowSize.ws_row = windowSize.ws_row;
+    }
+    return cachedWindowSize;
 }
+#else
+#endif
 
 void setPixel(int x, int y) {
     printf("\033[%d;%dH", y, x);
@@ -58,10 +66,10 @@ void pongGame::tick() {
     }
 
     // Ball collision with top and bottom walls
-    if (ball.y >= getRendererSize().ws_row) {
+    if (ball.y >= getRendererSize().ws_row - 1) {
         ball.direction = ball.direction == ballDirection::BOTTOM_LEFT ? ballDirection::TOP_LEFT : ballDirection::TOP_RIGHT;
     }
-    if (ball.y <= 1) {
+    if (ball.y <= 2) {
         ball.direction = ball.direction == ballDirection::TOP_LEFT ? ballDirection::BOTTOM_LEFT : ballDirection::BOTTOM_RIGHT;
     }
 
@@ -69,13 +77,13 @@ void pongGame::tick() {
     perfectPaddlePosition = ball.y;
 
     // Collision with perfect paddle (right)
-    if (ball.x >= getRendererSize().ws_col - 1) {
+    if (ball.x >= getRendererSize().ws_col - 2) {
         ball.direction = ball.direction == ballDirection::TOP_RIGHT ? ballDirection::TOP_LEFT : ballDirection::BOTTOM_LEFT;
         opponentScore++;
     }
 
     // Collision with AI paddle (left)
-    if (ball.x == 2) {
+    if (ball.x == 3) {
         if (ball.y > aiPaddlePosition - paddleHeight / 2 - 1 && ball.y < aiPaddlePosition + paddleHeight / 2 + 1) {
             score++;
             ball.direction = ball.direction == ballDirection::TOP_LEFT ? ballDirection::TOP_RIGHT : ballDirection::BOTTOM_RIGHT;
@@ -95,6 +103,15 @@ void pongGame::render() {
         std::cout << "\n";
     }
 
+    // Render borders
+    /*for (int x = 0; x < getRendererSize().ws_col + 1; x++) {
+        for (int y = 0; y < getRendererSize().ws_row + 1; y++) {
+            if (x == 0 || y == 0 || x == getRendererSize().ws_col || y == getRendererSize().ws_row) {
+                setPixel(x, y);
+            }
+        }
+    }*/
+
     // Render ball
     setPixel(ball.x, ball.y);
 
@@ -108,14 +125,14 @@ void pongGame::render() {
     for (int i = perfectPaddlePosition - paddleHeight / 2; i < perfectPaddlePosition + paddleHeight / 2; i++) {
         if (i <= 0) continue;
         if (i >= getRendererSize().ws_row) continue;
-        setPixel(getRendererSize().ws_col, i);
+        setPixel(getRendererSize().ws_col - 1, i);
     }
 
     // Render AI paddle
     for (int i = aiPaddlePosition - paddleHeight / 2; i < aiPaddlePosition + paddleHeight / 2; i++) {
         if (i <= 0) continue;
         if (i >= getRendererSize().ws_row) continue;
-        setPixel(1, i);
+        setPixel(2, i);
     }
     
     // Move to end
@@ -123,17 +140,9 @@ void pongGame::render() {
     printf("%c", '#');
 
     // Sleep
-    std::this_thread::sleep_for(std::chrono::milliseconds(8));
-}
-
-std::vector<float> pongGame::getNetworkInputs() {
-    return {
-        ((float)ball.y / getRendererSize().ws_row) * 2.f - 1.f,
-        ((float)ball.x / getRendererSize().ws_row) * 2.f - 1.f,
-        ((float)aiPaddlePosition / getRendererSize().ws_row) * 2.f - 1.f
-    };
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
 
 void pongGame::setAiPaddle(float y) {
-    aiPaddlePosition = (y + 1) * getRendererSize().ws_row / 2;
+    aiPaddlePosition = floor((y + 1) * getRendererSize().ws_row / 2);
 }
