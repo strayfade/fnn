@@ -63,20 +63,16 @@ _v(_type) neuralNetwork::forward(_v(_type) input) {
     return data.neurons[data.neurons.size() - 1];
 }
 
-void neuralNetwork::mutate(float chance = 0.5f, _type maxMutationAmount = 0.5f) {
+void neuralNetwork::mutate(_type maxMutationAmount) {
     for (unsigned long x = 0; x < data.biases.size(); x++) {
         for (unsigned long y = 0; y < data.biases[x].size(); y++) {
-            if (random(0.0f, 1.0f) <= chance) {
-                data.biases[x][y] += random(-maxMutationAmount, maxMutationAmount);
-            }
+            data.biases[x][y] += random(-maxMutationAmount, maxMutationAmount);
         }
     }
     for (unsigned long x = 0; x < data.weights.size(); x++) {
         for (unsigned long y = 0; y < data.weights[x].size(); y++) {
             for (unsigned long z = 0; z < data.weights[x][y].size(); z++) {
-                if (random(0.0f, chance) <= 0.5) {
-                    data.weights[x][y][z] += random(-maxMutationAmount, maxMutationAmount);
-                }
+                data.weights[x][y][z] += random(-maxMutationAmount, maxMutationAmount);
             }
         }
     }

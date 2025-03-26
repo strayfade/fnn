@@ -49,9 +49,8 @@ public:
     _v(_type) forward(_v(_type) input);
 
     /// @brief Mutates the network by adding a randomized value to the weights/biases
-    /// @param chance The chance from 0.f to 1.f for the network to mutate
     /// @param maxMutationAmount The maximum value that the weights/biases can deviate by
-    void mutate(float chance, _type maxMutationAmount);
+    void mutate(_type maxMutationAmount = 0.5f);
 
     /// @brief Copies the weights/biases from the Other network to the calling network.
     /// @param other A pointer to the Network object to clone data from

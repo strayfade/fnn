@@ -4,7 +4,7 @@
 #include <vector>
 #include <algorithm>
 
-#define NETWORKS_LEN 100
+#define NETWORKS_LEN 50
 #define NETWORKS_HIDDEN 20
 #define NETWORKS_LAYERS { 3, NETWORKS_HIDDEN, 1 }
 
@@ -29,7 +29,7 @@ int main() {
             networks[x]->cloneFrom(&highestPerformingNetwork);
 
             // Slightly mutate networks to represent genetic mutation between generations
-            networks[x]->mutate(0.5f, 0.5f);
+            networks[x]->mutate();
 
             // Spin up a game of pong
             pongGame currentGame;
@@ -38,7 +38,7 @@ int main() {
             unsigned long ticks = 0;
             unsigned long numMoves = 0;
             int lastPosition = 0;
-            while (!currentGame.gameOver && ticks < 999999) {
+            while (!currentGame.gameOver && ticks < 99999) {
 
                 // Get an array containing the ball X and Y, and the AI's current paddle position
                 std::vector<_type> inputs = {
@@ -63,28 +63,23 @@ int main() {
                 // Set the network's Fitness (scorekeeper) to the current number of ticks simulated
                 networks[x]->fitness = ticks - (float)numMoves * 3.f;
 
-                if (ticks > 999990) {
+                if (ticks > 99990) {
                     ticks = 0;
                     networks[x]->fitness = 0;
                     break;
                 }
             }
+            
+            // Check if network performed better than best network
+            if (networks[x]->fitness > highestPerformingNetwork.fitness) {
+                highestPerformingNetwork.cloneFrom(networks[x]);
+
+                printf("New local maximum: %5.2f\n", networks[x]->fitness);
+
+                break;
+            }
 
             //printf("Network %d finished training with score %d\n", x, ticks);
-        }
-
-        // Sort networks by highest performing to lowest
-        std::sort(networks.begin(), networks.end(), [](const neuralNetwork* a, const neuralNetwork* b) {
-            return a->fitness > b->fitness;
-        });
-
-        // Check if one of the newly trained networks is better than the highest performing network
-        if (networks[0]->fitness > highestPerformingNetwork.fitness) {
-
-            // Clone the highest performing network for the next generation
-            highestPerformingNetwork.cloneFrom(networks[0]);
-            
-            printf("New local maximum: %5.2f\n", networks[0]->fitness);
         }
 
         if (highestPerformingNetwork.fitness > 2000) {
