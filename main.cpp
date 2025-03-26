@@ -23,7 +23,7 @@ int main() {
     while (true) {
 
         // Loop through all of the networks
-        for (int x = 0; x < networks.size(); x++) {
+        for (unsigned long x = 0; x < networks.size(); x++) {
 
             // Start by cloning each network from the best performing network
             networks[x]->cloneFrom(&highestPerformingNetwork);

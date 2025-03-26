@@ -15,7 +15,7 @@ typedef double _type;
 #define _v3(T) std::vector<std::vector<std::vector<T>>>
 #define random(LOW, HIGH) (LOW + (float)(rand()) / ((float)(RAND_MAX / (HIGH - LOW))))
 
-/// @brief Class for managing a single neural network
+/// @brief Class for representing a single neural network
 class neuralNetwork {
 private:
 
@@ -34,9 +34,13 @@ public:
     /// @brief Value representing network performance, should be determined after forwarding
     float fitness;
 
-    /// @brief Initialization functions
+    /// @brief Fills the neurons array with blank values
     void createNeurons();
+
+    /// @brief Fills the biases array with blank values
     void createBiases();
+
+    /// @brief Fills the weights array with blank values
     void createWeights();
 
     /// @brief Feeds an input through the neural network and returns the network's output

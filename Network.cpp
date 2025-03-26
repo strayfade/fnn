@@ -42,16 +42,21 @@ void neuralNetwork::createWeights() {
 }
 
 _v(_type) neuralNetwork::forward(_v(_type) input) {
+
+    // Set the first layer of neurons to the input array
     for (unsigned long x = 0; x < input.size(); x++) {
         data.neurons[0][x] = input[x];
     }
+
     for (unsigned long x = 1; x < layers.size(); x++) {
-        int WorkingLayer = x - 1;
+        int workingLayer = x - 1;
         for (unsigned long y = 0; y < data.neurons[x].size(); y++) {
+
             _type newNeuronValue = 0.0f;
-            for (unsigned long z = 0; z < data.neurons[WorkingLayer].size(); z++) {
-                newNeuronValue += data.weights[WorkingLayer][y][z] * data.neurons[WorkingLayer][z];
+            for (unsigned long z = 0; z < data.neurons[workingLayer].size(); z++) {
+                newNeuronValue += data.weights[workingLayer][y][z] * data.neurons[workingLayer][z];
             }
+
             data.neurons[x][y] = tanh(newNeuronValue + data.biases[x][y]);
         }
     }
