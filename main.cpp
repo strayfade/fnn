@@ -5,7 +5,7 @@
 #include <algorithm>
 
 #define NETWORKS_LEN 100
-#define NETWORKS_HIDDEN 20, 20, 20
+#define NETWORKS_HIDDEN 20
 #define NETWORKS_LAYERS { 3, NETWORKS_HIDDEN, 1 }
 
 int main() {
