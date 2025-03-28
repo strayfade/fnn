@@ -4,7 +4,6 @@ class pongGame {
 
 private:
     int paddleHeight = -1;
-    int perfectPaddlePosition;
 
 public:
     int score;
@@ -29,7 +28,9 @@ public:
     } ball;
 
     int aiPaddlePosition;
+    int perfectPaddlePosition;
     void setAiPaddle(float y);
+    void setOpponentPaddle(float y);
 
     void tick();
     void render();

@@ -5,7 +5,7 @@
 
 #define NETWORKS_LEN 50
 #define NETWORKS_HIDDEN 20
-#define NETWORKS_LAYERS { 3, NETWORKS_HIDDEN, 1 }
+#define NETWORKS_LAYERS { 4, NETWORKS_HIDDEN, 2 }
 
 int main() {
 
@@ -35,8 +35,6 @@ int main() {
 
             // Run game until AI loses or until a time limit is hit
             unsigned long ticks = 0;
-            unsigned long numMoves = 0;
-            int lastPaddlePosition = 0;
             while (!currentGame.gameOver && ticks < 99999) {
 
                 // Get an array containing the ball X and Y, and the AI's current paddle position
@@ -45,7 +43,8 @@ int main() {
                 std::vector<_type> inputs = {
                     ((_type)currentGame.ball.y / currentGame.getRendererSize().ws_row) * 2.f - 1.f,
                     ((_type)currentGame.ball.x / currentGame.getRendererSize().ws_row) * 2.f - 1.f,
-                    ((_type)currentGame.aiPaddlePosition / currentGame.getRendererSize().ws_row) * 2.f - 1.f
+                    ((_type)currentGame.aiPaddlePosition / currentGame.getRendererSize().ws_row) * 2.f - 1.f,
+                    ((_type)currentGame.perfectPaddlePosition / currentGame.getRendererSize().ws_row) * 2.f - 1.f
                 };
 
                 // Forward the inputs through the network, returning an output array
@@ -53,20 +52,14 @@ int main() {
 
                 // Set the AI's paddle position
                 currentGame.setAiPaddle(outputs[0]);
-
-                // Calculates the distance the paddle moved so that it can be subtracted from the 
-                // fitness score, creating a network that prefers as little movement as possible
-                if (currentGame.aiPaddlePosition != lastPaddlePosition) {
-                    lastPaddlePosition = currentGame.aiPaddlePosition;
-                    numMoves += abs(currentGame.aiPaddlePosition - lastPaddlePosition);
-                }
+                currentGame.setOpponentPaddle(outputs[1]);
 
                 // Tick the pongGame
                 currentGame.tick();
                 ticks++;
 
                 // Set the network's Fitness (scorekeeper) to the current number of ticks simulated
-                networks[x]->fitness = ticks - (float)numMoves * 3.f;
+                networks[x]->fitness = ticks;
 
                 // Failsafe in case the pongGame crashes or exceeds a time limit
                 if (ticks > 99990) {
@@ -91,7 +84,7 @@ int main() {
         }
 
         // If the best network is especially performant, render a sample game on-screen
-        if (highestPerformingNetwork.fitness > 2000) {
+        if (highestPerformingNetwork.fitness > 1000) {
         
             // Create a pongGame and run until the game ends
             pongGame currentGame;
@@ -101,7 +94,8 @@ int main() {
                 std::vector<_type> inputs = {
                     ((_type)currentGame.ball.y / currentGame.getRendererSize().ws_row) * 2.f - 1.f,
                     ((_type)currentGame.ball.x / currentGame.getRendererSize().ws_row) * 2.f - 1.f,
-                    ((_type)currentGame.aiPaddlePosition / currentGame.getRendererSize().ws_row) * 2.f - 1.f
+                    ((_type)currentGame.aiPaddlePosition / currentGame.getRendererSize().ws_row) * 2.f - 1.f,
+                    ((_type)currentGame.perfectPaddlePosition / currentGame.getRendererSize().ws_row) * 2.f - 1.f
                 };
 
                 // Run the neural network
@@ -109,6 +103,7 @@ int main() {
 
                 // Set the paddle
                 currentGame.setAiPaddle(outputs[0]);
+                currentGame.setOpponentPaddle(outputs[1]);
 
                 // Tick and render the pongGame
                 currentGame.tick();

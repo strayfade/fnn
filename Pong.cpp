@@ -74,12 +74,17 @@ void pongGame::tick() {
     }
 
     // Set perfect paddle position
-    perfectPaddlePosition = ball.y;
+    //perfectPaddlePosition = ball.y;
 
     // Collision with perfect paddle (right)
     if (ball.x >= getRendererSize().ws_col - 2) {
-        ball.direction = ball.direction == ballDirection::TOP_RIGHT ? ballDirection::TOP_LEFT : ballDirection::BOTTOM_LEFT;
-        opponentScore++;
+        if (ball.y > perfectPaddlePosition - paddleHeight / 2 - 1 && ball.y < perfectPaddlePosition + paddleHeight / 2 + 1) {
+            ball.direction = ball.direction == ballDirection::TOP_RIGHT ? ballDirection::TOP_LEFT : ballDirection::BOTTOM_LEFT;
+            opponentScore++;
+        }
+        else {
+            gameOver = true;
+        }
     }
 
     // Collision with AI paddle (left)
@@ -90,8 +95,6 @@ void pongGame::tick() {
         }
         else {
             gameOver = true;
-            score = 0;
-            opponentScore = 0;
         }
     }
 }
@@ -118,7 +121,7 @@ void pongGame::render() {
     // Render scores
     printf("\033[%d;%dH", 2, 4);
     printf("%d", score);
-    printf("\033[%d;%dH", 2, getRendererSize().ws_col - 3);
+    printf("\033[%d;%dH", 2, (int)(getRendererSize().ws_col - 2 - std::to_string(opponentScore).length()));
     printf("%d", opponentScore);
 
     // Render perfect paddle
@@ -145,4 +148,7 @@ void pongGame::render() {
 
 void pongGame::setAiPaddle(float y) {
     aiPaddlePosition = floor((y + 1) * getRendererSize().ws_row / 2);
+}
+void pongGame::setOpponentPaddle(float y) {
+    perfectPaddlePosition = floor((y + 1) * getRendererSize().ws_row / 2);
 }
