@@ -1,6 +1,4 @@
 #!/bin/bash
 
-OUTPUT="main.out"
-
-g++ -std=c++17 -Wall -Wextra -o $OUTPUT main.cpp Network.cpp Pong.cpp
+g++ -std=c++17 -Wall -Wextra -o main.out main.cpp Network.cpp Pong.cpp
 ./$OUTPUT
