@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: Windows Compile (x64)
 
 on:
   push:
