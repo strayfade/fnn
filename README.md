@@ -1,5 +1,5 @@
 <h1 align="center">fnn</h1>
-A general-purpose, lightweight feed-forward neural network library for C++
+<p align="center">A general-purpose, lightweight feed-forward neural network library for C++</p>
 
 ### Features
  - Cross-platform compilation and targeting (x86/ARM)
