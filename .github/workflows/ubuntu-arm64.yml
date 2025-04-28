@@ -1,0 +1,36 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        arch: [ARM64]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up architecture-specific environment
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        if [ "${{ matrix.arch }}" = "ARM64" ]; then
+          sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+        fi
+
+    - name: Build (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        if [ "${{ matrix.arch }}" = "x64" ]; then
+          make
+        elif [ "${{ matrix.arch }}" = "ARM64" ]; then
+          make CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++
+        fi
