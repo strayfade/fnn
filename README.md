@@ -7,4 +7,7 @@ A general-purpose, lightweight feed-forward neural network library for C++
  - Serializing/deserializing trained models, saving/loading training checkpoints, etc.
 
 ### Usage
-For the **Pong** demo, just run `Run.sh`. This will compile and run `main.cpp` to show an example of this FNN library playing [Pong](https://en.wikipedia.org/wiki/Pong) and using reinforcement learning to improve over time. Almost always, `main.cpp` can be modified to fit your use case, and it is a great example to build from.
+For the **Pong** demo, just compile using `make` and run using `fnn.exe` or `./fnn`. This will show an example of this FNN library playing [Pong](https://en.wikipedia.org/wiki/Pong) and using reinforcement learning to improve over time. Almost always, `main.cpp` can be modified to fit your use case, and it is a great example to build from.
+
+> [!NOTE]
+> Rendering is a bit strange depending on the platform. It renders fine on most Linux terminals, but both `cmd.exe` and Visual Studio Code's terminal fail to render the example correctly. On Windows, the Visual Studio 2022 Debugger Console renders the example correctly. On Windows, the example can also be compiled and ran using MSYS2.

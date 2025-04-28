@@ -6,8 +6,8 @@ private:
     int paddleHeight = -1;
 
 public:
-    int score;
-    int opponentScore;
+    int score = 0;
+    int opponentScore = 0;
     bool gameOver = false;
 
     struct rendererSize_t {
@@ -24,7 +24,7 @@ public:
     };
     struct ballData {
         int x = -1, y;
-        ballDirection direction;  
+        ballDirection direction= ballDirection::TOP_LEFT;
     } ball;
 
     int aiPaddlePosition;

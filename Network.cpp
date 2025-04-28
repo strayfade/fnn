@@ -89,10 +89,10 @@ std::string neuralNetwork::serialize() {
         char buf[128];
         snprintf(buf, sizeof(buf), "%1.32f", t);
         return std::string(buf);
-    };
+        };
 
     std::stringstream stream;
-    
+
     for (unsigned long x = 0; x < data.biases.size(); x++) {
         for (unsigned long y = 0; y < data.biases[x].size(); y++) {
             stream << serializeType(data.biases[x][y]) << "\n";
@@ -105,7 +105,7 @@ std::string neuralNetwork::serialize() {
             }
         }
     }
-    
+
     return stream.str();
 }
 

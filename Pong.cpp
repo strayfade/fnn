@@ -1,7 +1,13 @@
-#include <stdio.h>
+#ifndef _WIN32
 #include <sys/ioctl.h>
 #include <unistd.h>
+#else
+#include <Windows.h>
+#endif
+
+#include <stdio.h>
 #include <iostream>
+#include <string>
 #include <cstdlib>
 #include <thread>
 #include <chrono>
@@ -10,7 +16,6 @@
 #include "Pong.h"
 
 #define rng(LOW, HIGH) (LOW + (float)(rand()) / ((float)(RAND_MAX / (HIGH - LOW))))
-
 
 #ifndef _WIN32
 pongGame::rendererSize_t pongGame::getRendererSize() {
@@ -23,6 +28,17 @@ pongGame::rendererSize_t pongGame::getRendererSize() {
     return cachedWindowSize;
 }
 #else
+pongGame::rendererSize_t pongGame::getRendererSize() {
+    if (cachedWindowSize.ws_col == 0) {
+        CONSOLE_SCREEN_BUFFER_INFO csbi;
+        if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi)) {
+            cachedWindowSize.ws_col = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+            cachedWindowSize.ws_row = csbi.srWindow.Bottom - csbi.srWindow.Top;
+        }
+    }
+
+    return cachedWindowSize;
+}
 #endif
 
 void setPixel(int x, int y) {
@@ -35,10 +51,10 @@ void pongGame::tick() {
 
     // Set both paddles' heights
     if (paddleHeight == -1) {
-        paddleHeight = ceil(getRendererSize().ws_row / 4);
+        paddleHeight = ceil(getRendererSize().ws_row / 6);
         aiPaddlePosition = floor(getRendererSize().ws_row / 2);
     }
-    
+
     // Set ball position
     if (ball.x == -1) {
         ball.x = getRendererSize().ws_col / 2;
@@ -46,22 +62,22 @@ void pongGame::tick() {
     }
 
     // Move ball 
-    switch(ball.direction) {
-        case ballDirection::TOP_LEFT:
-            ball.x--;
-            ball.y--;
+    switch (ball.direction) {
+    case ballDirection::TOP_LEFT:
+        ball.x--;
+        ball.y--;
         break;
-        case ballDirection::TOP_RIGHT:
-            ball.x++;
-            ball.y--;
+    case ballDirection::TOP_RIGHT:
+        ball.x++;
+        ball.y--;
         break;
-        case ballDirection::BOTTOM_LEFT:
-            ball.x--;
-            ball.y++;
+    case ballDirection::BOTTOM_LEFT:
+        ball.x--;
+        ball.y++;
         break;
-        case ballDirection::BOTTOM_RIGHT:
-            ball.x++;
-            ball.y++;
+    case ballDirection::BOTTOM_RIGHT:
+        ball.x++;
+        ball.y++;
         break;
     }
 
@@ -137,7 +153,7 @@ void pongGame::render() {
         if (i >= getRendererSize().ws_row) continue;
         setPixel(2, i);
     }
-    
+
     // Move to end
     printf("\033[%d;%dH", getRendererSize().ws_row, getRendererSize().ws_col);
     printf("%c", '#');
