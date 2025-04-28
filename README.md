@@ -2,7 +2,7 @@
 A general-purpose, lightweight feed-forward neural network library for C++
 
 ### Features
- - Fully cross-platform compilation and targeting
+ - Cross-platform compilation and targeting (x86/ARM)
  - Customizable input, hidden, and output layer sizes
  - Serializing/deserializing trained models, saving/loading, etc.
 
