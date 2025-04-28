@@ -1,4 +1,4 @@
-# fnn
+<h1 align="center">fnn</h1>
 A general-purpose, lightweight feed-forward neural network library for C++
 
 ### Features
