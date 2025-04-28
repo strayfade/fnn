@@ -16,4 +16,4 @@
 For the **Pong** demo, just compile using `make` and run using `fnn.exe` or `./fnn`. This will show an example of this FNN library playing [Pong](https://en.wikipedia.org/wiki/Pong) and using reinforcement learning to improve over time. Almost always, `main.cpp` can be modified to fit your use case, and it is a great example to build from.
 
 > [!NOTE]
-> Rendering is a bit strange depending on the platform. It renders fine on most Linux terminals, but both `cmd.exe` and Visual Studio Code's terminal fail to render the example correctly. On Windows, the Visual Studio 2022 Debugger Console renders the example correctly. On Windows, the example can also be compiled and ran using MSYS2.
+> Rendering is a bit strange depending on the platform. It renders fine on most Linux terminals, but both `cmd.exe` and Visual Studio Code's terminal fail to render the example correctly. On Windows, the Visual Studio 2022 Debugger Console renders the example correctly. On Windows, the example can also be compiled and ran using MSYS2. Performance also changes drastically depending on compiler settings.
